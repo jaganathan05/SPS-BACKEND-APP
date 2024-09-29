@@ -1,90 +1,59 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const sequelize = require('../Database/database'); 
+const Sequelize = require('sequelize');
 
-const gameSchema = new Schema({
+const Game = sequelize.define('Game', {
+    id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true
+    },
     gameId: {
-        type: String,
-        required: true,
-        unique: true,
-        
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
     },
-    players: [{
-        playerId: {
-            type: String,
-            required: true,
-            
-        },
-        playerName: {
-            type: String,
-            required: true,
-            
-        },
-        move:{
-            type: String,
-            required : true,
-           
-        },
-        point : {
-            type: Number ,
-            required : true
-        }
-        
-    }],
-    currentRound : {
-        type : Number,
-        required : true
+    Player1Id :{
+        type: Sequelize.INTEGER,
+        allowNull: false,
     },
-    TotalRounds : {
-        type : Number,
-        default : 6
+    Player1Name : {
+        type: Sequelize.STRING,
+        allowNull: true,
     },
-    rounds: [{
-        roundNumber: {
-            type: Number,
-            required: true
-        },
-        player1Name:{
-            type: String
-        },
-        player1Move: {
-            type: String,
-            enum: ['stone', 'paper', 'scissors'], 
-            required: true
-        },
-        player2Name:{
-            type: String
-        },
-        player2Move: {
-            type: String,
-            enum: ['stone', 'paper', 'scissors'], 
-            required: true
-        },
-        winner: {
-            type: String,
-            required: true
-        }
-    }],
-
+    Player2Name:{
+        type: Sequelize.STRING,
+        allowNull: true,
+    },
+    Player1Point:{
+        type: Sequelize.INTEGER,
+        allowNull: true,
+    },
+    Player2Point:{
+        type: Sequelize.INTEGER,
+        allowNull: true,
+    },
+    Player2Id :{
+        type: Sequelize.INTEGER,
+        allowNull: true,
+    },
+    currentRound: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue : 1
+    },
+    TotalRounds: {
+        type: Sequelize.INTEGER,
+        defaultValue: 6
+    },
     status: {
-        type: String,
-        enum: ['waiting', 'playing', 'finished'], 
-        default: 'waiting' 
+        type: Sequelize.STRING ,
+        defaultValue: 'waiting'
     },
-    finalwinner : {
-        type: String,
-        required : true,
-        default: 'Null'
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now 
-    },
-    updatedAt: {
-        type: Date,
-        default: Date.now 
+    finalwinner: {
+        type: Sequelize.STRING,
+        defaultValue: 'Null'
     }
 });
 
-
-
-module.exports = mongoose.model('Game', gameSchema);
+module.exports = Game;

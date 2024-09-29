@@ -6,7 +6,7 @@ require('dotenv').config()
 exports.PostSignup = (req, res, next) => {
     const { name, email, password } = req.body;
 
-    User.findOne({ 'email': email })
+    User.findOne({where:{ 'email': email }})
         .then(existingUser => {
             if (existingUser) {
                 return res.status(200).json({ success: false, message: 'This email already has an account' });
@@ -19,7 +19,7 @@ exports.PostSignup = (req, res, next) => {
                     return res.status(500).json({ success: false, message: 'Signup failed err',err  });
                 }
 
-                const user = new User({
+                const user = await User.create({
                     name: name,
                     email: email,
                     password: result,
@@ -27,14 +27,14 @@ exports.PostSignup = (req, res, next) => {
 
                 });
 
-                user.save()
-                    .then(response => {
+                if(user) {
+                    console.log(user)
                         return res.status(200).json({ success: true, message: 'register successful' });
-                    })
-                    .catch(saveErr => {
-                        console.log(saveErr);
-                        return res.status(500).json({ success: false, message: 'register failed save', saveErr});
-                    });
+                    }
+                   else {
+                        
+                        return res.status(500).json({ success: false, message: 'register failed save'});
+                    }
             });
         })
         .catch(err => {
@@ -48,16 +48,17 @@ exports.PostLogin = async (req, res) => {
         const { email, password } = req.body;
         console.log('Email is', email,password);
 
-        const user = await User.findOne( { 'email': email } );
+        const user = await User.findOne( {where:{ 'email': email }} );
 
         if (user) {
             const result = await bcrypt.compare(password, user.password);
             if (result === true) {
+                console.log(user)
                 return res.status(200).json({
                     success: true,
                     message: "Logged In Successfully",
                     playerName : user.name,
-                    token: generateAccesstoken(user._id, user.email)
+                    token: generateAccesstoken(user.id, user.email)
                 });
             } else {
                 return res.status(401).json({success:false,message: 'User not authorized'});

@@ -9,9 +9,10 @@ const authentication = async (req,res,next)=>{
         const SecretKey = process.env.Token_SecretKey;
         const user = jwt.verify(token,SecretKey);
         const userId = user.userId
-        User.findOne({'_id': userId}).then(user=>{
+        User.findOne({where:{'id': userId}}).then(user=>{
             //console.log(JSON.stringify(user));
             req.user=user;
+            console.log(user)
             next()
         }).catch(err=>{throw new Error(err)})
     }catch(err){
